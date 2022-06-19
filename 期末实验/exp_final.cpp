@@ -32,15 +32,16 @@ void makeStripeImage(void)
 static GLfloat xequalzero[] = { 1.0, 1.0, 1.0, 0.0 };
 static GLfloat slanted[] = { 0.0, 1.0, 0.0, 0.0 };
 static GLfloat *currentCoeff;
-static float roangles;
+static float roangles = 60.0f;
 void init(void)
 {
     //纹理渲染
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glEnable(GL_DEPTH_TEST);//启动深度测试
-    glShadeModel(GL_SMOOTH);//启动阴影平滑
+    glShadeModel(GL_SMOOTH);//明暗处理
     makeStripeImage();
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    //纹理过滤
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -57,12 +58,22 @@ void init(void)
     glEnable(GL_LIGHT0);   //启动0号光源
     glEnable(GL_AUTO_NORMAL);  //把光反射到各个方向
     glEnable(GL_NORMALIZE);  //在转换之后和光照之前将法线向量标准化成单位长度
-    glMaterialf(GL_FRONT, GL_SHININESS, 64.0);
-    roangles = 60.0f;
+
+
+    //材质
+    GLfloat mat_ambient[] = { 0.8, 0.8, 0.2, 1.0 };
+    GLfloat mat_diffuse[] = { 0.1, 0.8, 0.5, 1.0 };
+    GLfloat mat_specular[] = { 0.0, 0.0, 0.0, 1.0 };
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mat_ambient);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mat_diffuse);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+    glMaterialf(GL_FRONT, GL_SHININESS, 100.0);
+
 
     //定义光源的颜色和位置
    GLfloat ambient[] = { 0.0, 0.8, 0.1, 0.1 };
    GLfloat diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
+   GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
    GLfloat position[] = { -80.0, 50.0, 25.0, 1.0 };
    //选择光照模型
    GLfloat lmodel_ambient[] = { 0.4, 0.4, 0.4, 1.0 };
@@ -73,6 +84,8 @@ void init(void)
    glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
    //设置漫射光
    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
+   //镜面光
+   glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
    //设置光源位置
    glLightfv(GL_LIGHT0, GL_POSITION, position);
    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
@@ -134,7 +147,6 @@ void display_roboto(void) {
 	glRotated(spinY, 1, 0, 0);
     glRotatef(roangles, 0.0, 1.0, 0.0);
     glTranslated(0, 0, des);
-    //glutSolidTeapot(3);   //茶壶
 
     //头
 	drawBall(2, 0, 1, 0, SOLID);
@@ -245,7 +257,6 @@ int main(int argc, char** argv) {
     glutInitWindowSize(600, 600);
     glutInitWindowPosition(100, 100);
     glutCreateWindow(argv[0]);
-    //glutIdleFunc(idle);
     init();
     do{
     printf("请选择需要查看的图形：1、机器人 2、茶壶 \n");
@@ -262,9 +273,9 @@ int main(int argc, char** argv) {
 	    glutKeyboardFunc(keyPressed);
 	}else if(choice=='2'){
 		glutDisplayFunc(display_teapot);
-        //自动旋转
+		//自动旋转
 		glutIdleFunc(idle);
-        //窗口重定义
+		//窗口重定义
 		glutReshapeFunc(reshape);
 
 	}else{
