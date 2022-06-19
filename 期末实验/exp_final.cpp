@@ -22,10 +22,10 @@ void makeStripeImage(void)
     {
         for (j = 0; j < stripeImageHeight; j++)
         {
-            stripeImage[i][0][j] = (GLubyte)(i * 10 - 3);
-            stripeImage[i][1][j] = (GLubyte)(j * 6 - 4);
-            stripeImage[i][2][j] = (GLubyte)70;
-            stripeImage[i][3][j] = (GLubyte)255;
+            stripeImage[i][j][0] = (GLubyte)(i * 10 - 3);
+            stripeImage[i][j][1] = (GLubyte)(j * 6 - 4);
+            stripeImage[i][j][2] = (GLubyte)70;
+            stripeImage[i][j][3] = (GLubyte)255;
         }
     }
 }
